@@ -61,13 +61,15 @@ public class Test
 
     //version test
 
+    //Using EPSG:3857
+
     private static int MonitorWidth = 1366;
     private static int MonitorHeight = 768;
-    private static double XOrigin = -8573920;
-    private static double YOrigin = 4705040;
-    private static double Interval = 80;
-    private static double HorizontalSquares = 4;
-    private static double VerticalSquares = 4;
+    private static double XOrigin = -8573920;       //Middle point in map
+    private static double YOrigin = 4705040;        //Middle point in map
+    private static double Interval = 80;            //Size of each quadrant
+    private static double HorizontalSquares = 4;    //Map quadrants
+    private static double VerticalSquares = 4;      //Map quadrants
 
     static ImageIcon mapIcon;
 
@@ -93,7 +95,6 @@ public class Test
 
         final ImageIcon icon = mapIcon;
 
-
         Dimension layoutSize = new Dimension(ImageWidth, ImageHeight);
 
         Layout<String, Number> layout = new StaticLayout<String, Number>(graph,
@@ -104,14 +105,13 @@ public class Test
 
         layout.setSize(layoutSize);
 
-
         final VisualizationViewer<String,Number> vv = new VisualizationViewer<String, Number>(layout,
                 new Dimension(MonitorWidth, MonitorHeight));
 
         vv.getRenderContext().setEdgeShapeTransformer(
                 new EdgeShape.Line());
 
-
+        //draw map
         if (icon != null) {
             vv.addPreRenderPaintable(new VisualizationViewer.Paintable() {
                 public void paint(Graphics g) {
@@ -154,6 +154,7 @@ public class Test
                 {
                     prevMillis = System.currentTimeMillis();
                 }
+
                 long dtMs = System.currentTimeMillis() - prevMillis;
                 double dt = dtMs / 1000.0;
                 double phase = 0.5 + Math.sin(dt) * 0.5;
@@ -161,10 +162,10 @@ public class Test
                 vv.repaint();
             }
         });
+
         t.start();
 
         vv.addPostRenderPaintable(imageAtEdgePainter);
-
 
         f.getContentPane().add(vv);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -337,20 +338,31 @@ public class Test
     {
         Graph<String, Number> g = new DirectedSparseMultigraph<String, Number>();
 
-        map.put("POINT1", new String[]{"4705190", "-8574039"});
+        //play with these values
+
+        //map.put("POINT1", new String[]{"4705190", "-8574039"});
         map.put("POINT2", new String[]{"4705190", "-8573817"});
         //map.put("POINT3", new String[]{"4704960", "-8574039"});
-        //map.put("POINT4", new String[]{"4704960", "-8573817"});
+        map.put("POINT4", new String[]{"4704960", "-8573817"});
 
         for (String node : map.keySet()) {
             g.addVertex(node);
         }
 
-        nodeList = new ArrayList<String>(map.keySet());
+        //g.addEdge(1,"POINT1","POINT2",EdgeType.DIRECTED);
+        //g.addEdge(2,"POINT1","POINT3",EdgeType.DIRECTED);
+
+        g.addEdge(3,"POINT2","POINT4",EdgeType.DIRECTED);
+        //g.addEdge(4,"POINT1","POINT3",EdgeType.DIRECTED);
+
+        /*nodeList = new ArrayList<String>(map.keySet());
 
         for (int i = 0; i < map.keySet().size() * 1.3; i++) {
             g.addEdge(Math.random(), randomNode(), randomNode(), EdgeType.DIRECTED);
+
         }
+        */
+
 
         return g;
     }
